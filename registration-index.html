@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Wellspring of Light!</title>
+    <h1>Welcome to the Wellspring of Light!</h1>
+    <h3>Please enter a valid email and create a temporary password<br>for a 7-day complete access trial!</h3>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        h3 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            padding-top: 5px;
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        p#error_message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        #kajabi-form-container {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Create Password</h1>
+    <form id="passwordForm">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+        <br>
+        <label for="confirm_password">Confirm Password:</label>
+        <input type="password" name="confirm_password" id="confirm_password" required>
+        <br>
+        <p id="error_message"></p>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="kajabi-form-container"></div>
+
+    <script>
+        const form = document.getElementById('passwordForm');
+        const errorMessage = document.getElementById('error_message');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirm_password = document.getElementById('confirm_password').value;
+
+            if (password !== confirm_password) {
+                errorMessage.textContent = "Passwords do not match!";
+            } else {
+                errorMessage.textContent = "";
+                sendForm(email, password);
+            }
+        });
+
+        function sendForm(email, password) {
+            const xhr = new XMLHttpRequest();
+            const formData = new FormData();
+
+            formData.append('email', email);
+            formData.append('password', password);
+
+            xhr.open('POST', 'store_password.php', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        displaySuccessMessage();
+                        resetForm();
+                    } else {
+                        displayErrorMessage();
+                    }
+                }
+            };
+            xhr.send(formData);
+        }
+
+        function displaySuccessMessage() {
+            const successMessage = document.createElement('p');
+            successMessage.textContent = 'Congratulations on your free full-access 7-Day pass! Please check your email for further instructions on how to access your trial membership.';
+            form.appendChild(successMessage);
+        }
+
+        function displayErrorMessage() {
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'An error occurred. Please try again later. If this continues to happen, please email WellspringLight@gmail.com';
+            form.appendChild(errorMessage);
+        }
+
+        function resetForm() {
+            form.reset();
+        }
+
+        (function() {
+          // Create the Kajabi form element
+          var kajabiForm = document.createElement('div');
+          kajabiForm.id = 'kajabi-form';
+          kajabiForm.className = 'kajabi-form--inline';
+
+          // Create the Kajabi form HTML
+          var formHTML = '<form data-parsley-validate="true" data-kjb-disable-on-submit="true" action="https://www.wellspringoflight.com/forms/2148198423/form_submissions" accept-charset="UTF-8" method="post">';
+          formHTML += '<input name="utf8" type="hidden" value="&#x2713;">';
+          formHTML += '<input type="hidden" name="authenticity_token" value="nNBKCKn80nzKB5zLbwrF5nab5TmJTahoix3N+U5uKr1XIq/uJ/CyXDEyOzWJy5uapPzzTNpevOFeTeTq2KNouQ==">';
+          formHTML += '<div class="kajabi-form__content">';
+          formHTML += '<fieldset>';
+          formHTML += '<div class="email-field kajabi-form__form-item"><input required="required" placeholder="Email" data-parsley-remote="true" data-parsley-remote-validator="kjb_email_validator" type="email" name="form_submission[email]" id="form_submission_email" /></div>';
+          formHTML += '<div class="text-field kajabi-form__form-item"><input type="text" name="form_submission[name]" id="form_submission_name" value="" required="required" placeholder="Password" /></div>';
+          formHTML += '<button class="kajabi-form__btn kajabi-form__btn--block-mobile" type="submit">Subscribe</button>';
+          formHTML += '</fieldset>';
+          formHTML += '</div>';
+          formHTML += '</form>';
+
+          // Set the Kajabi form HTML as the content of the kajabiForm element
+          kajabiForm.innerHTML = formHTML;
+
+          // Insert the Kajabi form below the existing form
+          var kajabiFormContainer = document.getElementById('kajabi-form-container');
+          kajabiFormContainer.appendChild(kajabiForm);
+
+          // Populate the embedded Kajabi form fields with the values from the current form
+          var emailField = document.getElementById('form_submission_email');
+          var passwordField = document.getElementById('form_submission_name');
+          var currentForm = document.getElementById('passwordForm');
+
+          currentForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            emailField.value = currentForm.email.value;
+            passwordField.value = currentForm.password.value;
+            setTimeout(function() {
+              kajabiForm.querySelector('button[type="submit"]').click();
+            }, 5000);
+          });
+        })();
+
+
+
+    </script>
+</body>
+</html>

@@ -132,30 +132,60 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
-                        displaySuccessMessage();
-                        resetForm();
+                        const response = xhr.responseText.trim();
+
+                        if (response === 'User Exists') {
+                              handleEmailExists();
+                          } else if (response === 'Record saved successfully.') {
+                            displaySuccessMessage();
+                            resetForm();
+                        } else {
+                            displayErrorMessage('Error saving record '+response);
+                        }
                     } else {
-                        displayErrorMessage();
+                        displayErrorMessage('Server Error '+response);
                     }
                 }
             };
             xhr.send(formData);
         }
 
-        function displaySuccessMessage() {
-            const successMessage = document.createElement('p');
-            successMessage.textContent = 'Congratulations on your free full-access 7-Day pass! Please check your email for further instructions on how to access your trial membership.';
-            form.appendChild(successMessage);
+        function handleEmailExists() {
+          const displayMessage = document.createElement('p');
+            displayMessage.textContent = "User already exists!";
+            form.appendChild(displayMessage);
         }
 
-        function displayErrorMessage() {
+
+        function displaySuccessMessage() {
+            const successMessage = document.createElement('p');
+            successMessage.textContent = 'Processing...';
+            form.appendChild(successMessage);
+            executeKajabiForm();
+        }
+
+        function displayErrorMessage(msg) {
             const errorMessage = document.createElement('p');
-            errorMessage.textContent = 'An error occurred. Please try again later. If this continues to happen, please email WellspringLight@gmail.com';
+            errorMessage.textContent = msg;
             form.appendChild(errorMessage);
         }
 
         function resetForm() {
             form.reset();
+        }
+
+        function executeKajabiForm() {
+                // Populate the embedded Kajabi form fields with the values from the current form
+                var emailField = document.getElementById('form_submission_email');
+                var passwordField = document.getElementById('form_submission_name');
+                var currentForm = document.getElementById('passwordForm');
+
+                emailField.value = currentForm.email.value;
+                passwordField.value = currentForm.password.value;
+
+                // Trigger the Kajabi form submission
+                var submitButton = document.querySelector('#kajabi-form button[type="submit"]');
+                submitButton.click();
         }
 
         (function() {
@@ -189,14 +219,9 @@
           var passwordField = document.getElementById('form_submission_name');
           var currentForm = document.getElementById('passwordForm');
 
-          currentForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            emailField.value = currentForm.email.value;
-            passwordField.value = currentForm.password.value;
-            setTimeout(function() {
-              kajabiForm.querySelector('button[type="submit"]').click();
-            }, 5000);
-          });
+              // Populate the form fields with current form values
+          emailField.value = currentForm.email.value;
+          passwordField.value = currentForm.password.value;
         })();
 
 

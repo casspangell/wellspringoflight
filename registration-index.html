@@ -56,6 +56,15 @@
             box-sizing: border-box;
         }
 
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
         p#error_message {
             color: red;
             margin-top: 10px;
@@ -86,6 +95,9 @@
 <body>
     <h1>Create Password</h1>
     <form id="passwordForm">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required>
+        <br>
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
         <br>
@@ -109,6 +121,7 @@
         form.addEventListener('submit', function (event) {
             event.preventDefault();
 
+            const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirm_password = document.getElementById('confirm_password').value;
@@ -117,14 +130,15 @@
                 errorMessage.textContent = "Passwords do not match!";
             } else {
                 errorMessage.textContent = "";
-                sendForm(email, password);
+                sendForm(name, email, password);
             }
         });
 
-        function sendForm(email, password) {
+        function sendForm(name, email, password) {
             const xhr = new XMLHttpRequest();
             const formData = new FormData();
 
+            formData.append('name', name);
             formData.append('email', email);
             formData.append('password', password);
 
@@ -177,11 +191,11 @@
         function executeKajabiForm() {
                 // Populate the embedded Kajabi form fields with the values from the current form
                 var emailField = document.getElementById('form_submission_email');
-                var passwordField = document.getElementById('form_submission_name');
+                var nameField = document.getElementById('form_submission_name');
                 var currentForm = document.getElementById('passwordForm');
 
                 emailField.value = currentForm.email.value;
-                passwordField.value = currentForm.password.value;
+                nameField.value = currentForm.name.value;
 
                 // Trigger the Kajabi form submission
                 var submitButton = document.querySelector('#kajabi-form button[type="submit"]');
@@ -218,10 +232,6 @@
           var emailField = document.getElementById('form_submission_email');
           var passwordField = document.getElementById('form_submission_name');
           var currentForm = document.getElementById('passwordForm');
-
-              // Populate the form fields with current form values
-          emailField.value = currentForm.email.value;
-          passwordField.value = currentForm.password.value;
         })();
 
 

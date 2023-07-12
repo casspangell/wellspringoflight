@@ -1,41 +1,64 @@
 <?php
-$hostname = "74.124.198.128";
-$username = "asoulh5";
-$password = "\$Mi11ion\$123";
-$dbname = "asoulh5_zoom";
+$hostname="74.124.198.128"; 
+$username="asoulh5"; 
+$password="\$Mi11ion\$123"; 
+$dbname="asoulh5_zoom"; 
+$tablename="zoom";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-if (!$conn) {
+if ($conn->connect_error) {
     echo "Failed to connect to the database. Please contact the system administrator: " . $conn->connect_error;
 } else {
-    $userpassword = $_POST['password'];
-    $useremail = $_POST['email'];
-    $useremail = urldecode($useremail);
+    $userEmail = $_POST['email'];
+    $userPassword = $_POST['password'];
+    $userEmail = urldecode($userEmail);
 
-    $query = "SELECT `password`, `timestamp`, `email` FROM `zoom` WHERE password = '$userpassword' AND email = '$useremail'";
-    $result = mysqli_query($conn,$query);
-    $check = mysqli_fetch_array($result);
+    // Escape special characters in the user inputs to prevent SQL injection
+    $userEmail = mysqli_real_escape_string($conn, $userEmail);
 
-    if(isset($check)){
-        $row = $result->fetch_assoc();
-        $timestamp = strtotime($row['timestamp']);
+    $query = "SELECT * FROM `$tablename` WHERE email = '$userEmail'";
+    $result = mysqli_query($conn, $query);
 
-        // Compare the timestamp with the current date
-        $currentDate = strtotime(date('Y-m-d'));
-        $expirationDate = strtotime('-7 days', $currentDate);
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $hashedPassword = $row['password'];
+            $timestamp = $row['timestamp'];
 
-        if ($timestamp > $expirationDate) {
-            echo "Password is still valid and will redirect them to the zoom page";
-        } else {
-            // Password has expired
-            echo "Password has expired";
+            // Verify the user-provided password against the hashed password
+            if (password_verify($userPassword, $hashedPassword)) {
+                //SUCCESS
+                // Password matches, output the desired information
+                // echo "USER FOUND   ";
+                // echo "Email: " . htmlspecialchars($row['email']) . "<br>";
+                // echo "Password: **********<br>"; // Don't display the hashed password
+                // echo "Timestamp: " . $timestamp . "<br>";
+                // echo "<br>";
+
+                // Calculate the number of days difference
+                $currentTimestamp = time();
+                $timestampDiff = $currentTimestamp - strtotime($timestamp);
+                $daysDiff = floor($timestampDiff / (60 * 60 * 24));
+                $daysLeft = 7 - $daysDiff;
+                
+                if ($daysDiff > 7) {
+                    echo "Wellness Trial Membership has Expired.";
+                } else {
+                    // Password is still valid
+                    // Output the desired information
+                    echo "You have " . $daysLeft . " days left of your membership";
+                }
+
+            } else {
+                // Password does not match
+                echo "Invalid email or password. If you are having struggles please email Paul at WellspringLight@gmail.com to reset your password.";
+            }
         }
-
-    }else{
-    echo 'Incorrect Email or Password';
+    } else {
+        // No rows found
+        echo "No rows found with the provided email.";
     }
 }
 
 mysqli_close($conn);
-?>
+

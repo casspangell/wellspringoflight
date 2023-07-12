@@ -18,8 +18,10 @@ if ($conn->connect_error) {
 }
 
 // Prepare the SQL statement
+$name = $_POST['name'];
 $email = $_POST['email'];
 $password = $_POST['password'];
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 $timestamp = date("Y-m-d");
 
 // Check if the email already exists
@@ -30,9 +32,7 @@ if ($result->num_rows > 0) {
     echo "User Exists";
     
 } else {
-
-    $sql = "INSERT INTO $tablename (password, timestamp, email) VALUES ('$password', '$timestamp', '$email')";
-
+    $sql = "INSERT INTO $tablename (name, password, timestamp, email) VALUES ('$name', '$hashedPassword', '$timestamp', '$email')";
     if ($conn->query($sql) === TRUE) {
         echo "Record saved successfully.";
     } else {

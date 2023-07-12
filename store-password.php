@@ -21,13 +21,23 @@ if ($conn->connect_error) {
 $email = $_POST['email'];
 $password = $_POST['password'];
 $timestamp = date("Y-m-d");
-$sql = "INSERT INTO $tablename (password, timestamp, email) VALUES ('$password', '$timestamp', '$email')";
 
-// Execute the SQL statement
-if ($conn->query($sql) === TRUE) {
-    echo "Record saved successfully.";
+// Check if the email already exists
+$checkEmailSql = "SELECT * FROM $tablename WHERE email = '$email'";
+$result = $conn->query($checkEmailSql);
+
+if ($result->num_rows > 0) {
+    echo "User Exists";
+    
 } else {
-    echo "Error saving record: " . $conn->error;
+
+    $sql = "INSERT INTO $tablename (password, timestamp, email) VALUES ('$password', '$timestamp', '$email')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Record saved successfully.";
+    } else {
+        echo "Error saving record: " . $conn->error;
+    }
 }
 
 // Close the connection

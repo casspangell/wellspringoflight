@@ -28,13 +28,6 @@ if ($conn->connect_error) {
             // Verify the user-provided password against the hashed password
             if (password_verify($userPassword, $hashedPassword)) {
                 //SUCCESS
-                // Password matches, output the desired information
-                // echo "USER FOUND   ";
-                // echo "Email: " . htmlspecialchars($row['email']) . "<br>";
-                // echo "Password: **********<br>"; // Don't display the hashed password
-                // echo "Timestamp: " . $timestamp . "<br>";
-                // echo "<br>";
-
                 // Calculate the number of days difference
                 $currentTimestamp = time();
                 $timestampDiff = $currentTimestamp - strtotime($timestamp);

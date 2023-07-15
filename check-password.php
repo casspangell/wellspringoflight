@@ -1,9 +1,9 @@
 <?php
-$hostname="74.124.198.128"; 
-$username="asoulh5"; 
-$password="\$Mi11ion\$123"; 
-$dbname="asoulh5_zoom"; 
-$tablename="zoom";
+$hostname=""; 
+$username=""; 
+$password=""; 
+$dbname=""; 
+$tablename="";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

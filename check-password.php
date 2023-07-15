@@ -12,7 +12,6 @@ if ($conn->connect_error) {
 } else {
     $userEmail = $_POST['email'];
     $userPassword = $_POST['password'];
-    $userEmail = urldecode($userEmail);
 
     // Escape special characters in the user inputs to prevent SQL injection
     $userEmail = mysqli_real_escape_string($conn, $userEmail);
@@ -24,6 +23,7 @@ if ($conn->connect_error) {
         while ($row = mysqli_fetch_assoc($result)) {
             $hashedPassword = $row['password'];
             $timestamp = $row['timestamp'];
+            $username = $row['name'];
 
             // Verify the user-provided password against the hashed password
             if (password_verify($userPassword, $hashedPassword)) {
@@ -38,7 +38,7 @@ if ($conn->connect_error) {
                     echo json_encode(array("error" => "Wellness Trial Membership has Expired."));
                 } else {
                     // Password is still valid
-                    echo json_encode(array("success" => true, "daysLeft" => $daysLeft));
+                    echo json_encode(array("success" => true, "daysLeft" => $daysLeft, "userName" => $username));
                 }
 
             } else {

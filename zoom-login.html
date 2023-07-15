@@ -63,6 +63,27 @@
             background-color: #45a049;
         }
 
+        button[type="joinZoom"] {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #517fb0;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+       #joinZoom {
+        padding: 10px;
+        font-size: 16px;
+        background-color: #517fb0;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
     </style>
 </head>
 <body>
@@ -74,29 +95,50 @@
         <div class="input-field">
             <input type="password" id="passwordInput" placeholder="7 Day Password">
         </div>
-        <div class="button-wrapper">
-            <button type="submit" onclick="checkPassword()">Join Today's Wellness Class</button>
+        <div class="button-wrapper" id="loginArea">
+            <button type="submit" onclick="checkPassword()" id="loginButton">Click to Verify Password</button>
+        </div>
+        <div id="successMessage" style="display: none;">
+            <p>Password is still valid. You have <span id="daysLeft"></span> days left.</p>
+            <button type="joinZoom" onclick="redirectToZoom()" id="joinZoom">Click to Join Today's Wellness Class</button>
         </div>
         <p id="result"></p>
     </div>
+<script>
+    function checkPassword() {
+        var password = document.getElementById("passwordInput").value;
+        var email = document.getElementById("emailInput").value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "check-password.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    <script>
-        function checkPassword() {
-            var password = document.getElementById("passwordInput").value;
-            var email = document.getElementById("emailInput").value;
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "check-password.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    document.getElementById("result").textContent = xhr.responseText;
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.hasOwnProperty("success")) {
+                    var daysLeft = response.daysLeft;
+                    document.getElementById("daysLeft").textContent = daysLeft;
+                    document.getElementById("successMessage").style.display = "block";
+                    document.getElementById("joinZoom").style.display = "inline-block";
+                    document.getElementById("loginArea").style.display = "none";
+                } else if (response.hasOwnProperty("error")) {
+                    document.getElementById("result").textContent = response.error;
                 }
-            };
+            }
+        };
 
-            var formData = "password=" + encodeURIComponent(password) + "&email=" + encodeURIComponent(email);
-            xhr.send(formData);
-        }
-    </script>
+        var formData = "password=" + encodeURIComponent(password) + "&email=" + encodeURIComponent(email);
+        xhr.send(formData);
+    }
+
+    function redirectToZoom() {
+        window.open("https://us06web.zoom.us/j/87253104654?pwd=cVFvcnlKcEdhd05aUG5PM2dOOGRoZz09", "_blank");
+        window.location.href = "https://www.wellspringoflight.com/";
+    }
+</script>
+
+
 </body>
+
+
 </html>

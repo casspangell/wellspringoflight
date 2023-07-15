@@ -1,14 +1,14 @@
 <?php
-$hostname=""; 
-$username=""; 
-$password=""; 
-$dbname=""; 
-$tablename="";
+$hostname="74.124.198.128"; 
+$username="asoulh5"; 
+$password="\$Mi11ion\$123"; 
+$dbname="asoulh5_zoom"; 
+$tablename="zoom";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    echo "Failed to connect to the database. Please contact the system administrator: " . $conn->connect_error;
+    echo json_encode(array("error" => "Failed to connect to the database. Please contact the system administrator: " . $conn->connect_error));
 } else {
     $userEmail = $_POST['email'];
     $userPassword = $_POST['password'];
@@ -35,23 +35,23 @@ if ($conn->connect_error) {
                 $daysLeft = 7 - $daysDiff;
                 
                 if ($daysDiff > 7) {
-                    echo "Wellness Trial Membership has Expired.";
+                    echo json_encode(array("error" => "Wellness Trial Membership has Expired."));
                 } else {
                     // Password is still valid
-                    // Output the desired information
-                    echo "You have " . $daysLeft . " days left of your membership";
+                    echo json_encode(array("success" => true, "daysLeft" => $daysLeft));
                 }
 
             } else {
                 // Password does not match
-                echo "Invalid email or password. If you are having struggles please email Paul at WellspringLight@gmail.com to reset your password.";
+                echo json_encode(array("error" => "Invalid email or password. If you are having struggles, please email Paul at WellspringLight@gmail.com to reset your password."));
             }
         }
     } else {
         // No rows found
-        echo "No rows found with the provided email.";
+        echo json_encode(array("error" => "No rows found with the provided email."));
     }
 }
+
 
 mysqli_close($conn);
 

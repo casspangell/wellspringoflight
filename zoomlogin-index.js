@@ -35,24 +35,7 @@ function websdkready() {
   document.getElementById("meeting_pwd").value = MEETING_PASSCODE;
   document.getElementById("meeting_pwd").type = "password";
 
-  // if (testTool.getCookie("meeting_lang"))
-  //   document.getElementById("meeting_lang").value = testTool.getCookie(
-  //     "meeting_lang"
-  //   );
 
-  // document
-  //   .getElementById("meeting_lang")
-  //   .addEventListener("change", function (e) {
-  //     testTool.setCookie(
-  //       "meeting_lang",
-  //       document.getElementById("meeting_lang").value
-  //     );
-  //     testTool.setCookie(
-  //       "_zm_lang",
-  //       document.getElementById("meeting_lang").value
-  //     );
-  //   });
-  // copy zoom invite link to mn, autofill mn and pwd.
   document
     .getElementById("meeting_number")
     .addEventListener("input", function (e) {
@@ -82,12 +65,7 @@ function websdkready() {
     window.location.href = "/index.html";
   });
 
-  // click join meeting button
-  document
-    .getElementById("join_meeting")
-    .addEventListener("click", function (e) {
-      e.preventDefault();
-      var meetingConfig = testTool.getMeetingConfig();
+        var meetingConfig = testTool.getMeetingConfig();
       if (!meetingConfig.mn || !meetingConfig.name) {
         alert("Meeting number or username is empty");
         return false;
@@ -108,10 +86,9 @@ function websdkready() {
           meetingConfig.sdkKey = CLIENT_ID;
           var joinUrl = "https://taohealinggroup.com/Livestream/meeting.html?" + testTool.serialize(meetingConfig);
           console.log(joinUrl);
-          window.open(joinUrl, "_blank");
+           window.location.href = joinUrl;
         },
       });
-    });
 
   function copyToClipboard(elementId) {
     var aux = document.createElement("input");

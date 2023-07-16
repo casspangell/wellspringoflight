@@ -99,7 +99,7 @@
             <button type="submit" onclick="checkPassword()" id="loginButton">Click to Verify Password</button>
         </div>
         <div id="successMessage" style="display: none;">
-            <p>Password is still valid. You have <span id="daysLeft"></span> days left.</p>
+            <p>Welcome <span id="userName"></span>! Your trial is still valid for <span id="daysLeft"></span> days.</p>
             <button type="joinZoom" onclick="redirectToZoom()" id="joinZoom">Click to Join Today's Wellness Class</button>
         </div>
         <p id="result"></p>
@@ -117,7 +117,9 @@
                 var response = JSON.parse(xhr.responseText);
                 if (response.hasOwnProperty("success")) {
                     var daysLeft = response.daysLeft;
+                    var userName = response.userName;
                     document.getElementById("daysLeft").textContent = daysLeft;
+                    document.getElementById("userName").textContent = userName;
                     document.getElementById("successMessage").style.display = "block";
                     document.getElementById("joinZoom").style.display = "inline-block";
                     document.getElementById("loginArea").style.display = "none";
@@ -132,11 +134,19 @@
     }
 
     function redirectToZoom() {
-        window.open("", "_blank");
+
+        var email = document.getElementById("emailInput").value;
+        console.log(email);
+        var username = document.getElementById("userName").textContent;
+        console.log(username);
+        var encodedEmail = encodeURIComponent(email);
+        var encodedUsername = encodeURIComponent(username);
+        var url = "https://taohealinggroup.com/Livestream/?email=" + encodedEmail + "&username=" + encodedUsername;
+    
+        window.open(url, "_blank");
         window.location.href = "https://www.wellspringoflight.com/";
     }
 </script>
-
 
 </body>
 

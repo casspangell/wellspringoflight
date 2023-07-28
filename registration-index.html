@@ -99,26 +99,26 @@
 </head>
 <body>
     <h1>Create Password</h1>
-    <form id="passwordForm">
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" required>
-        <br>
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
-        <br>
-        <label for="confirm_password">Confirm Password:</label>
-        <input type="password" name="confirm_password" id="confirm_password" required>
-        <br>
-        <form action="?" method="POST" id="recaptcha">
-          <div class="g-recaptcha" data-sitekey="temporary_site_key" data-callback="onRecaptchaSuccess"></div>
-          <br/>
-          <p id="error_message"></p>
-          <button type="submit" value="Submit">Submit</button>
+        <form id="passwordForm" action="?" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" required>
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <br>
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" name="confirm_password" id="confirm_password" required>
+            <br>
+            <div id="recaptcha">
+                <div class="g-recaptcha" data-sitekey="temporary_site_key" data-callback="onRecaptchaSuccess"></div>
+            </div>
+            <br/>
+            <p id="error_message"></p>
+            <button type="submit" value="Submit">Submit</button>
         </form>
-    </form>
 
     <div id="kajabi-form-container"></div>
 
@@ -131,6 +131,7 @@
                     const recaptchaDiv = document.querySelector('.g-recaptcha');
                     recaptchaDiv.setAttribute('data-sitekey', recaptchaSiteKey);
                     grecaptcha.reset();
+                    console.log("RECAPTCHA DATA SUCCESS");
                 })
                 .catch(error => {
                     // Handle errors if any

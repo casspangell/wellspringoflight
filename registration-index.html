@@ -90,6 +90,11 @@
             display: none;
         }
 
+
+    .g-recaptcha {
+        padding-top: 20px;
+      }
+
     </style>
 </head>
 <body>
@@ -107,16 +112,20 @@
         <label for="confirm_password">Confirm Password:</label>
         <input type="password" name="confirm_password" id="confirm_password" required>
         <br>
-        <p id="error_message"></p>
-        <button type="submit">Submit</button>
+        <form action="?" method="POST" id="recaptcha">
+          <div class="g-recaptcha" data-sitekey="6LdjnzEnAAAAADQl3BFisp00kQQSZ3mb7R2IRuD0" data-callback="onRecaptchaSuccess"></div>
+          <br/>
+          <p id="error_message"></p>
+          <button type="submit" value="Submit">Submit</button>
+        </form>
     </form>
-
 
     <div id="kajabi-form-container"></div>
 
     <script>
         const form = document.getElementById('passwordForm');
         const errorMessage = document.getElementById('error_message');
+        var recaptchaSuccess = false;
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -126,11 +135,15 @@
             const password = document.getElementById('password').value;
             const confirm_password = document.getElementById('confirm_password').value;
 
-            if (password !== confirm_password) {
-                errorMessage.textContent = "Passwords do not match!";
+            if (recaptchaSuccess) {
+                if (password !== confirm_password) {
+                    errorMessage.textContent = "Passwords do not match!";
+                } else {
+                    errorMessage.textContent = "";
+                    sendForm(name, email, password);
+                }
             } else {
-                errorMessage.textContent = "";
-                sendForm(name, email, password);
+                errorMessage.textContent = "Please check the box on the reCAPTCHA";
             }
         });
 
@@ -188,6 +201,11 @@
             form.reset();
         }
 
+        function onRecaptchaSuccess(response) {
+          console.log("reCAPTCHA verification successful!");
+          recaptchaSuccess = true;
+        }
+
         function executeKajabiForm() {
                 // Populate the embedded Kajabi form fields with the values from the current form
                 var emailField = document.getElementById('form_submission_email');
@@ -233,9 +251,7 @@
           var passwordField = document.getElementById('form_submission_name');
           var currentForm = document.getElementById('passwordForm');
         })();
-
-
-
     </script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>

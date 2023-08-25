@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wellness Zoom Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-field {
+            padding-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        p#error_message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .button-wrapper {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button[type="submit"] {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        button[type="joinZoom"] {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #517fb0;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+       #joinZoom {
+        padding: 10px;
+        font-size: 16px;
+        background-color: #517fb0;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    </style>
+</head>
+<body>
+    <h1>Wellness Zoom Login</h1>
+    <div class="container">
+        <div class="input-field">
+            <input type="email" id="emailInput" placeholder="Email">
+        </div>
+        <div class="input-field">
+            <input type="password" id="passwordInput" placeholder="7 Day Password">
+        </div>
+        <div class="button-wrapper" id="loginArea">
+            <button type="submit" onclick="checkPassword()" id="loginButton">Click to Verify Password</button>
+        </div>
+        <div id="successMessage" style="display: none;">
+            <p>Welcome <span id="userName"></span>! Your trial is still valid for <span id="daysLeft"></span> days.</p>
+            <button type="joinZoom" onclick="redirectToZoom()" id="joinZoom">Click to Join Today's Wellness Class</button>
+        </div>
+        <p id="result"></p>
+    </div>
+<script>
+    function checkPassword() {
+        var password = document.getElementById("passwordInput").value;
+        var email = document.getElementById("emailInput").value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "check-password.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.hasOwnProperty("success")) {
+                    var daysLeft = response.daysLeft;
+                    var userName = response.userName;
+                    document.getElementById("daysLeft").textContent = daysLeft;
+                    document.getElementById("userName").textContent = userName;
+                    document.getElementById("successMessage").style.display = "block";
+                    document.getElementById("joinZoom").style.display = "inline-block";
+                    document.getElementById("loginArea").style.display = "none";
+                } else if (response.hasOwnProperty("error")) {
+                    document.getElementById("result").textContent = response.error;
+                }
+            }
+        };
+
+        var formData = "password=" + encodeURIComponent(password) + "&email=" + encodeURIComponent(email);
+        xhr.send(formData);
+    }
+
+    function redirectToZoom() {
+        console.log("redirectToZoom");
+        var email = document.getElementById("emailInput").value;
+        console.log(email);
+        var username = document.getElementById("userName").textContent;
+        console.log(username);
+        var encodedEmail = encodeURIComponent(email);
+        var encodedUsername = encodeURIComponent(username);
+        var url = "https://taohealinggroup.com/Livestream/?email=" + encodedEmail + "&username=" + encodedUsername;
+    
+        window.open(url, "_blank");
+        window.location.href = "https://www.wellspringoflight.com/filler-after-sign-in";
+    }
+</script>
+
+</body>
+
+
+</html>

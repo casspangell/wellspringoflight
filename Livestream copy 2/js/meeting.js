@@ -3,7 +3,8 @@ window.addEventListener('DOMContentLoaded', function(event) {
   websdkready();
 });
 
-function websdkready() {
+async function websdkready() {
+
   var testTool = window.testTool;
   // get meeting args from url
   var tmpArgs = testTool.parseQuery();
@@ -28,7 +29,7 @@ function websdkready() {
       );
     })(),
     passWord: tmpArgs.pwd,
-    leaveUrl: "https://www.wellspringoflight.com/membership",
+    leaveUrl: "https://www.wellspringoflight.com/trialmembership",
     role: parseInt(tmpArgs.role, 10),
     userEmail: (function () {
       try {
@@ -46,7 +47,7 @@ function websdkready() {
   if (testTool.isMobileDevice()) {
     vConsole = new VConsole();
   }
-  console.log(JSON.stringify(ZoomMtg.checkSystemRequirements()));
+  // console.log(JSON.stringify(ZoomMtg.checkSystemRequirements()));
 
   // it's option if you want to change the WebSDK dependency link resources. setZoomJSLib must be run at first
   // ZoomMtg.setZoomJSLib("https://source.zoom.us/2.14.0/lib", "/av"); // CDN version defaul
@@ -54,7 +55,7 @@ function websdkready() {
     ZoomMtg.setZoomJSLib("https://jssdk.zoomus.cn/2.14.0/lib", "/av"); // china cdn option
   ZoomMtg.preLoadWasm();
   ZoomMtg.prepareJssdk();
-  function beginJoin(signature) {
+  async function beginJoin(signature) {
     ZoomMtg.init({
       leaveUrl: meetingConfig.leaveUrl,
       webEndpoint: meetingConfig.webEndpoint,
@@ -62,8 +63,6 @@ function websdkready() {
       // disablePreview: false, // default false
       externalLinkPage: './externalLinkPage.html',
       success: function () {
-        console.log(meetingConfig);
-        console.log("signature", signature);
         ZoomMtg.i18n.load(meetingConfig.lang);
         ZoomMtg.i18n.reload(meetingConfig.lang);
         ZoomMtg.join({
@@ -84,6 +83,7 @@ function websdkready() {
             });
           },
           error: function (res) {
+            console.log("KILROY UNSUCCESS");
             console.log(res);
           },
         });
@@ -93,22 +93,59 @@ function websdkready() {
       },
     });
 
-    ZoomMtg.inMeetingServiceListener('onUserJoin', function (data) {
-      console.log('inMeetingServiceListener onUserJoin', data);
-    });
-  
-    ZoomMtg.inMeetingServiceListener('onUserLeave', function (data) {
-      console.log('inMeetingServiceListener onUserLeave', data);
-    });
-  
-    ZoomMtg.inMeetingServiceListener('onUserIsInWaitingRoom', function (data) {
-      console.log('inMeetingServiceListener onUserIsInWaitingRoom', data);
-    });
-  
-    ZoomMtg.inMeetingServiceListener('onMeetingStatus', function (data) {
-      console.log('inMeetingServiceListener onMeetingStatus', data);
-    });
+    // Target the element with the class "mini-layout-body-title"
+    var divElement = document.querySelector(".mini-layout-body-title");
+
+    if (divElement) {
+      divElement.innerHTML = "Please wait.";
+    }
+
+
+    const joinBtn = document.getElementById("join-btn");
+    async function setButtonStatus() {
+      const response = await fetch("https://us-central1-wellspring-of-light.cloudfunctions.net/zoomSig/meeting/status");
+      const res = await response.json();
+      if (res.success && res.isOnline) {
+        joinBtn.disabled = false;
+        joinBtn.innerHTML = "Join";
+
+        const labelElement = document.createElement('h2');
+        labelElement.textContent = "This session is now live! Please press Join to connect with your Wellness Practice.";
+        labelElement.style.color = '#ffffff';
+        labelElement.style.backgroundColor = '#ff0000';
+        labelElement.style.textAlign = 'center';
+        labelElement.style.padding = '10px';
+        joinBtn.parentNode.insertBefore(labelElement, joinBtn);
+        divElement.innerHTML = "";
+
+        // divElement.innerHTML = "This session is now live! Please press Join to connect with your Wellness Practice.";
+        // divElement.style.backgroundColor = '#ff0000';
+        joinBtn.classList.remove("loading");
+        clearInterval(intervalId); //stop polling once online
+      } else {
+        joinBtn.disabled = true;
+        joinBtn.innerHTML = "Waiting for host to start the meeting...";
+        joinBtn.classList.add("loading");
+      }
+    }
+
+    let intervalId = setInterval(async function() {
+      await setButtonStatus();
+    }, 10000); //every 10 seconds
+    joinBtn.disabled = true;
+    joinBtn.innerHTML = "Waiting for host to start the meeting...";
+    joinBtn.classList.add("loading");
+    divElement.innerHTML = "Please wait.";
+    setButtonStatus();
   }
 
   beginJoin(meetingConfig.signature);
+
 };
+
+function triggerButtonClick() {
+  // const joinBtn = document.getElementById("join-btn");
+  // if (joinBtn) {
+  //   joinBtn.click();
+  // }
+}

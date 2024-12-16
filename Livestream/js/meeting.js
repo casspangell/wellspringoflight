@@ -3,8 +3,7 @@ window.addEventListener('DOMContentLoaded', function(event) {
   websdkready();
 });
 
-function websdkready() {
-
+async function websdkready() {
 
   var testTool = window.testTool;
   // get meeting args from url
@@ -56,7 +55,7 @@ function websdkready() {
     ZoomMtg.setZoomJSLib("https://jssdk.zoomus.cn/2.14.0/lib", "/av"); // china cdn option
   ZoomMtg.preLoadWasm();
   ZoomMtg.prepareJssdk();
-  function beginJoin(signature) {
+  async function beginJoin(signature) {
     ZoomMtg.init({
       leaveUrl: meetingConfig.leaveUrl,
       webEndpoint: meetingConfig.webEndpoint,
@@ -98,18 +97,55 @@ function websdkready() {
     var divElement = document.querySelector(".mini-layout-body-title");
 
     if (divElement) {
-      divElement.innerHTML = "Please wait.\nPage will automatically connect you when the event starts.";
+      divElement.innerHTML = "Please wait.";
     }
-    // Target the button element you want to hide
-    // const joinBtn = document.getElementById("join-btn");
 
-    // Hide the element by setting its display property to "none"
-    // if (joinBtn) {
-    //   joinBtn.style.display = "none";
-    // }
 
+    const joinBtn = document.getElementById("join-btn");
+    async function setButtonStatus() {
+      const response = await fetch("https://us-central1-wellspring-of-light.cloudfunctions.net/zoomSig/meeting/status");
+      const res = await response.json();
+      if (res.success && res.isOnline) {
+        joinBtn.disabled = false;
+        joinBtn.innerHTML = "Join";
+
+        const labelElement = document.createElement('h2');
+        labelElement.textContent = "This session is now live! Please press Join to connect with your Wellness Practice.";
+        labelElement.style.color = '#ffffff';
+        labelElement.style.backgroundColor = '#ff0000';
+        labelElement.style.textAlign = 'center';
+        labelElement.style.padding = '10px';
+        joinBtn.parentNode.insertBefore(labelElement, joinBtn);
+        divElement.innerHTML = "";
+
+        // divElement.innerHTML = "This session is now live! Please press Join to connect with your Wellness Practice.";
+        // divElement.style.backgroundColor = '#ff0000';
+        joinBtn.classList.remove("loading");
+        clearInterval(intervalId); //stop polling once online
+      } else {
+        joinBtn.disabled = true;
+        joinBtn.innerHTML = "Waiting for host to start the meeting...";
+        joinBtn.classList.add("loading");
+      }
+    }
+
+    let intervalId = setInterval(async function() {
+      await setButtonStatus();
+    }, 10000); //every 10 seconds
+    joinBtn.disabled = true;
+    joinBtn.innerHTML = "Waiting for host to start the meeting...";
+    joinBtn.classList.add("loading");
+    divElement.innerHTML = "Please wait.";
+    setButtonStatus();
   }
 
   beginJoin(meetingConfig.signature);
 
 };
+
+function triggerButtonClick() {
+  // const joinBtn = document.getElementById("join-btn");
+  // if (joinBtn) {
+  //   joinBtn.click();
+  // }
+}

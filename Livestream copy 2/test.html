@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Webhook Page</title>
+</head>
+
+<body>
+<h1>Meeting Started Webhook Test</h1>
+<div id="message"></div>
+
+<script>
+    // Function to handle the incoming meeting data from the HTTP POST request
+    function handleWebhookData(data) {
+        // Extract the relevant information from the data object (modify as needed based on the payload structure)
+        const { meetingId, meetingTitle, startTime } = data;
+
+        // Display the meeting details in the div with id="message"
+        const message = `Meeting ID: ${meetingId}, Meeting Title: ${meetingTitle}, Start Time: ${startTime}`;
+        document.getElementById('message').textContent = message;
+    }
+
+    // Function to fetch meeting data from Pipedream via HTTP POST request
+    function fetchMeetingData() {
+        const webhookURL = 'https://api.pipedream.com/v1/sources/dc_3puKKDK';
+
+        // Make a fetch request to the webhook URL
+        fetch(webhookURL)
+            .then(response => response.json())
+            .then(data => {
+                // Call the handleWebhookData function to process the received data
+                handleWebhookData(data);
+            })
+            .catch(error => {
+                console.error('Error fetching meeting data:', error);
+            });
+    }
+
+    // Call the fetchMeetingData function on page load to get the data from Pipedream
+    fetchMeetingData();
+</script>
+</body>
+
+</html>

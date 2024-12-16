@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Webhook Page</title>
+</head>
+
+<body>
+    <h1>Meeting Started Webhook Test</h1>
+    <div id="message"></div>
+
+    <script>
+        // Function to handle the incoming meeting data from the webhook
+        function handleWebhookData(data) {
+            // Extract the relevant information from the data object (modify as needed based on the webhook payload)
+            const message = "Meeting Started!";
+
+            // Display the message in the div with id="message"
+            document.getElementById('message').textContent = message;
+        }
+
+        // Simulate the webhook trigger (for testing purposes)
+        function simulateWebhookTrigger() {
+            // Sample data that you would receive from the webhook
+            const data = {
+                "meetingId": "1234567890",
+                "meetingTitle": "Test Meeting",
+                "startTime": "2023-07-24T15:00:00Z"
+                // Add any other relevant data fields from your actual webhook payload
+            };
+
+            // Call the handleWebhookData function to process the received data (replace with actual data from the webhook)
+            handleWebhookData(data);
+        }
+
+        // Call the simulateWebhookTrigger function on page load (for testing purposes)
+        simulateWebhookTrigger();
+    </script>
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+
 window.addEventListener('DOMContentLoaded', function(event) {
   console.log('DOM fully loaded and parsed');
   websdkready();
@@ -17,15 +18,15 @@ function websdkready() {
   // ZoomMtg.setZoomJSLib('http://localhost:9999/node_modules/@zoomus/websdk/dist/lib', '/av'); // Local version default, Angular Project change to use cdn version
   ZoomMtg.preLoadWasm(); // pre download wasm file to save time.
 
-  var CLIENT_ID = "";
+  var CLIENT_ID = "EkqiDzmeS3mRWBnimlh7nA";
   /**
    * NEVER PUT YOUR ACTUAL SDK SECRET OR CLIENT SECRET IN CLIENT SIDE CODE, THIS IS JUST FOR QUICK PROTOTYPING
    * The below generateSignature should be done server side as not to expose your SDK SECRET in public
    * You can find an example in here: https://developers.zoom.us/docs/meeting-sdk/auth/#signature
    */
-  var CLIENT_SECRET = "";
-  var MEETING_PASSCODE = "";
-  var MEETING_NUMBER =  "";
+  var CLIENT_SECRET = "fP3vXSgRLcCkdiFq9BigGRTRNavOq7tN";
+  var MEETING_PASSCODE = "522709";
+  var MEETING_NUMBER =  "87253104654";
 
   // some help code, remember mn, pwd, lang to cookie, and autofill.
   // document.getElementById("display_name").value = "My Name"
@@ -65,30 +66,30 @@ function websdkready() {
     window.location.href = "/index.html";
   });
 
-        var meetingConfig = testTool.getMeetingConfig();
-      if (!meetingConfig.mn || !meetingConfig.name) {
-        alert("Meeting number or username is empty");
-        return false;
-      }
+  var meetingConfig = testTool.getMeetingConfig();
+  if (!meetingConfig.mn || !meetingConfig.name) {
+    alert("Meeting number or username is empty");
+    return false;
+  }
 
-      
-      testTool.setCookie("meeting_number", meetingConfig.mn);
-      testTool.setCookie("meeting_pwd", meetingConfig.pwd);
+  
+  testTool.setCookie("meeting_number", meetingConfig.mn);
+  testTool.setCookie("meeting_pwd", meetingConfig.pwd);
 
-      var signature = ZoomMtg.generateSDKSignature({
-        meetingNumber: meetingConfig.mn,
-        sdkKey: CLIENT_ID,
-        sdkSecret: CLIENT_SECRET,
-        role: meetingConfig.role,
-        success: function (res) {
-          console.log(res.result);
-          meetingConfig.signature = res.result;
-          meetingConfig.sdkKey = CLIENT_ID;
-          var joinUrl = "https://taohealinggroup.com/Livestream/meeting.html?" + testTool.serialize(meetingConfig);
-          console.log(joinUrl);
-           window.location.href = joinUrl;
-        },
-      });
+  var signature = ZoomMtg.generateSDKSignature({
+    meetingNumber: meetingConfig.mn,
+    sdkKey: CLIENT_ID,
+    sdkSecret: CLIENT_SECRET,
+    role: meetingConfig.role,
+    success: function (res) {
+      console.log(res.result);
+      meetingConfig.signature = res.result;
+      meetingConfig.sdkKey = CLIENT_ID;
+      var joinUrl = "https://taohealinggroup.com/Livestream/meeting.html?" + testTool.serialize(meetingConfig);
+      console.log(joinUrl);
+       window.location.href = joinUrl;
+    },
+  });
 
   function copyToClipboard(elementId) {
     var aux = document.createElement("input");
@@ -98,7 +99,7 @@ function websdkready() {
     document.execCommand("copy");
     document.body.removeChild(aux);
   }
-    
+
   // click copy jon link button
   window.copyJoinLink = function (element) {
     var meetingConfig = testTool.getMeetingConfig();

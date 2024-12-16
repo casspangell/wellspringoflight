@@ -13,43 +13,43 @@ if ($conn->connect_error) {
     $userEmail = $_POST['email'];
     $userPassword = $_POST['password'];
 
-    // Escape special characters in the user inputs to prevent SQL injection
-    $userEmail = mysqli_real_escape_string($conn, $userEmail);
+        // Escape special characters in the user inputs to prevent SQL injection
+        $userEmail = mysqli_real_escape_string($conn, $userEmail);
 
-    $query = "SELECT * FROM `$tablename` WHERE email = '$userEmail'";
-    $result = mysqli_query($conn, $query);
+        $query = "SELECT * FROM `$tablename` WHERE email = '$userEmail'";
+        $result = mysqli_query($conn, $query);
 
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $hashedPassword = $row['password'];
-            $timestamp = $row['timestamp'];
-            $username = $row['name'];
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $hashedPassword = $row['password'];
+                $timestamp = $row['timestamp'];
+                $username = $row['name'];
 
-            // Verify the user-provided password against the hashed password
-            if (password_verify($userPassword, $hashedPassword)) {
-                //SUCCESS
-                // Calculate the number of days difference
-                $currentTimestamp = time();
-                $timestampDiff = $currentTimestamp - strtotime($timestamp);
-                $daysDiff = floor($timestampDiff / (60 * 60 * 24));
-                $daysLeft = 7 - $daysDiff;
-                
-                if ($daysDiff > 7) {
-                    echo json_encode(array("error" => "Wellness Trial Membership has Expired."));
+                // Verify the user-provided password against the hashed password
+                if (password_verify($userPassword, $hashedPassword)) {
+                    //SUCCESS
+                    // Calculate the number of days difference
+                    $currentTimestamp = time();
+                    $timestampDiff = $currentTimestamp - strtotime($timestamp);
+                    $daysDiff = floor($timestampDiff / (60 * 60 * 24));
+                    $daysLeft = 7 - $daysDiff;
+                    
+                    if ($daysDiff > 7) {
+                        echo json_encode(array("error" => "Wellness Trial Membership has Expired."));
+                    } else {
+                        // Password is still valid
+                        echo json_encode(array("success" => true, "daysLeft" => $daysLeft, "userName" => $username));
+                    }
+
                 } else {
-                    // Password is still valid
-                    echo json_encode(array("success" => true, "daysLeft" => $daysLeft, "userName" => $username));
+                    // Password does not match
+                    echo json_encode(array("error" => "Invalid email or password. If you are having struggles, please email Paul at WellspringLight@gmail.com to reset your password."));
                 }
-
-            } else {
-                // Password does not match
-                echo json_encode(array("error" => "Invalid email or password. If you are having struggles, please email Paul at WellspringLight@gmail.com to reset your password."));
             }
+        } else {
+            // No rows found
+            echo json_encode(array("error" => "No rows found with the provided email."));
         }
-    } else {
-        // No rows found
-        echo json_encode(array("error" => "No rows found with the provided email."));
-    }
 }
 
 
